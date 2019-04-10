@@ -26,20 +26,23 @@ import java.util.List;
 
 import static com.felix.popularmoviesst1.utilities.Constant.API_KEY;
 import static com.felix.popularmoviesst1.utilities.Constant.MOVIE_DB_BASE_URL;
-
-import static com.felix.popularmoviesst1.utilities.Constant.POPULARITY_DESC;
-import static com.felix.popularmoviesst1.utilities.Constant.SORTED_BY;
-import static com.felix.popularmoviesst1.utilities.Constant.VOTE_AVERAGE_DESC;
+import static com.felix.popularmoviesst1.utilities.Constant.POPULARITY;
+import static com.felix.popularmoviesst1.utilities.Constant.TOP_RATED;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.OnItemClickListener {
 
     public static final String MOVIE = "movie";
+    public static final String VOTE_AVERAGE = "vote_average";
+    public static final String KEY_TITLE = "title";
+    public static final String OVERVIEW = "overview";
+    public static final String RELEASE_DATE = "release_date";
+    public static final String POSTER_PATH = "poster_path";
+
 
     private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
     private List<Movie> mMovieList;
     private RequestQueue mRequestQueue;
-    private String url = MOVIE_DB_BASE_URL + API_KEY + SORTED_BY ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
         mMovieList = new ArrayList<>();
 
         mRequestQueue = Volley.newRequestQueue(this);
-        parseJSON(url + POPULARITY_DESC);
+        parseJSON(MOVIE_DB_BASE_URL + POPULARITY + API_KEY);
     }
 
     private void parseJSON(String url) {
@@ -69,12 +72,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject result = jsonArray.getJSONObject(i);
 
-                                double voteAverage = result.getDouble("vote_average");
-                                String title = result.getString("title");
-                                String overView = result.getString("overview");
-                                String releaseDate = result.getString("release_date");
+                                double voteAverage = result.getDouble(VOTE_AVERAGE);
+                                String title = result.getString(KEY_TITLE);
+                                String overView = result.getString(OVERVIEW);
+                                String releaseDate = result.getString(RELEASE_DATE);
 
-                                String posterPath = result.getString("poster_path");
+                                String posterPath = result.getString(POSTER_PATH);
                                 String imageUrl = "https://image.tmdb.org/t/p/w185" + posterPath;
 
                                 mMovieList.add(new Movie(voteAverage, title, overView, releaseDate, imageUrl));
@@ -111,12 +114,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnIt
         switch (id) {
             case R.id.sort_popular:
                 mMovieList.clear();
-                parseJSON(url + POPULARITY_DESC);
+                parseJSON(MOVIE_DB_BASE_URL + POPULARITY + API_KEY);
                 mMovieAdapter.notifyDataSetChanged();
                 return true;
             case R.id.sort_rating:
                 mMovieList.clear();
-                parseJSON(url + VOTE_AVERAGE_DESC);
+                parseJSON(MOVIE_DB_BASE_URL + TOP_RATED + API_KEY);
                 mMovieAdapter.notifyDataSetChanged();
                 return true;
         }
